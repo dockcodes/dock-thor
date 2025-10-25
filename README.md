@@ -1,6 +1,6 @@
 # dock-thor-client
 
-`dock-thor-client` is a Python client for **DockTHOR error reporting**, designed to easily capture and send application errors, exceptions, and messages to the PAB API. It supports asynchronous operation so that sending errors does not block your main application flow.
+`dock-thor-client` is a Python client for **DockTHOR error reporting**, designed to easily capture and send application errors, exceptions, and messages to the DockTHOR API. It supports asynchronous operation so that sending errors does not block your main application flow.
 
 ## Features
 
@@ -19,10 +19,9 @@ pip install dock-thor-client
 ## Usage
 Initialize the client
 ```python
-from dock_thor_client import DockThorClient, AuthData
+from dock_thor import DockThorClient
 
-auth = AuthData(token="your-token", private_key="your-private-key")
-client = DockThorClient(auth)
+client = DockThorClient(token="your-token", private_key="your-private-key")
 ```
 
 ## Capture an exception
