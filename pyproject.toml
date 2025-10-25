@@ -1,0 +1,12 @@
+[project]
+name = "dock-thor-client"
+version = "0.1.0"
+description = "Python client for Dock THOR error reporting"
+authors = [{ name = "Jacek Labudda" }]
+readme = "README.md"
+requires-python = ">=3.9"
+dependencies = ["httpx>=0.27.0"]
+
+[build-system]
+requires = ["setuptools>=61.0"]
+build-backend = "setuptools.build_meta"
