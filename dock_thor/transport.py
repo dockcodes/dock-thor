@@ -11,7 +11,6 @@ class HttpTransport:
         serializer = PayloadSerializer()
         content = serializer.serialize(event)
         url = self.auth.transaction_url() if transaction else self.auth.project_url()
-        print(f"URL: {url}")
         headers = {
             "Content-Type": "application/json",
             "Authorization": f"Bearer {self.auth.private_key}",
@@ -19,6 +18,7 @@ class HttpTransport:
 
         response = await self.client.post(url, headers=headers, content=content)
         response.raise_for_status()
+        print(f"Response: {response.content}")
         return response
 
     async def close(self):
