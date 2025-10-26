@@ -22,7 +22,15 @@ class DockThorFastAPIMiddleware:
             return
 
         method = scope["method"]
+        headers = dict(scope.get("headers", []))
+        referer = None
+        if b"referer" in headers:
+            referer = headers[b"referer"].decode()
+        elif b"referrer" in headers:
+            referer = headers[b"referrer"].decode()
         client_host = scope.get("client", [""])[0] if scope.get("client") else None
+        user_agent = headers.get(b"user-agent")
+        user_agent = user_agent.decode() if user_agent else None
         trace_id = uuid.uuid4().hex
         span_id = uuid.uuid4().hex
         start_time = time.time()
@@ -64,6 +72,7 @@ class DockThorFastAPIMiddleware:
                 tags = {
                     "http.status_code": status_code,
                     "client_host": client_host,
+                    "user_agent": user_agent,
                 },
             )
 

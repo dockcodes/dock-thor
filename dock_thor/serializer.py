@@ -85,6 +85,7 @@ class PayloadSerializer:
                     if span.tags:
                         span_dict["tags"] = span.tags
                         payload["user"]["ip_address"] = span.tags.get("client_host", "")
+                        payload["user"]["agent"] = span.tags.get("user_agent", "")
                     payload["spans"].append(span_dict)
 
         return json.dumps(payload, ensure_ascii=False)
