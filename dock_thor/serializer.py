@@ -6,16 +6,17 @@ from .models import Event
 class PayloadSerializer:
 
     @staticmethod
-    def serialize(event: Event, transaction: str | None = None, request: dict | None = None, user: dict | None = None,
+    def serialize(event: Event, transaction: str | None = None, request: dict | None = None,
+                  user: dict | None = None,
                   http_status_code: int | None = None) -> str:
-        now_iso = datetime.now(timezone.utc)
+        now_iso = datetime.now(timezone.utc).isoformat()
 
         payload = {
             "event_id": event.event_id,
             "timestamp": event.timestamp,
             "sdk": {
                 "name": "dock-thor-client",
-                "version": "0.9.7"
+                "version": "0.9.8"
             },
             "environment": event.environment,
             "platform": event.platform,
@@ -24,7 +25,7 @@ class PayloadSerializer:
             "extra": event.extra,
             "tags": event.tags,
             "user": user or {},
-            "last_issued_at": str(now_iso),
+            "last_issued_at": now_iso,
             "status": "Pending",
             "contexts": {
                 "os": {
@@ -41,8 +42,8 @@ class PayloadSerializer:
             payload["exception"] = {
                 "values": [{
                     "type": event.exception.get("type"),
-                    "value": event.message,
-                    "stacktrace": event.exception.get("traceback", "")
+                    "value": event.exception.get("value"),
+                    "stacktrace": event.exception.get("stacktrace", {}),
                 }]
             }
 
