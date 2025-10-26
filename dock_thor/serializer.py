@@ -16,7 +16,7 @@ class PayloadSerializer:
             "timestamp": event.timestamp,
             "sdk": {
                 "name": "dock-thor-client",
-                "version": "0.9.10"
+                "version": "0.9.11"
             },
             "environment": event.environment,
             "platform": event.platform,
@@ -56,6 +56,7 @@ class PayloadSerializer:
 
         if event.transaction:
             payload["transaction"] = event.transaction
+            payload["sent_at"] = now_iso
             payload.setdefault("contexts", {}).setdefault("trace", {})["data"] = {}
 
             if event.spans:
