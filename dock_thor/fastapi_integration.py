@@ -23,12 +23,12 @@ class DockThorFastAPIMiddleware:
 
         method = scope["method"]
         headers = dict(scope.get("headers", []))
-        referer = None
-        if b"referer" in headers:
-            referer = headers[b"referer"].decode()
-        elif b"referrer" in headers:
-            referer = headers[b"referrer"].decode()
-        client_host = scope.get("client", [""])[0] if scope.get("client") else None
+        if b"x-forwarded-for" in headers:
+            client_host = headers[b"x-forwarded-for"].decode().split(",")[0].strip()
+        elif b"x-real-ip" in headers:
+            client_host = headers[b"x-real-ip"].decode().strip()
+        else:
+            client_host = scope.get("client", [""])[0] if scope.get("client") else None
         user_agent = headers.get(b"user-agent")
         user_agent = user_agent.decode() if user_agent else None
         trace_id = uuid.uuid4().hex
