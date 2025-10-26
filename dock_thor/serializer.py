@@ -6,7 +6,7 @@ from .models import Event
 class PayloadSerializer:
 
     @staticmethod
-    def serialize(self, event: Event, transaction: str | None = None, request: dict | None = None, user: dict | None = None,
+    def serialize(event: Event, transaction: str | None = None, request: dict | None = None, user: dict | None = None,
                   http_status_code: int | None = None) -> str:
         now_iso = datetime.now(timezone.utc)
 
@@ -14,8 +14,8 @@ class PayloadSerializer:
             "event_id": event.event_id,
             "timestamp": event.timestamp,
             "sdk": {
-                "name": "pab-client",
-                "version": "0.9.5"
+                "name": "dock-thor-client",
+                "version": "0.9.6"
             },
             "environment": event.environment,
             "platform": event.platform,
