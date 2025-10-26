@@ -15,8 +15,6 @@ class DockThorFastAPIMiddleware:
             await self.app(scope, receive, send)
             return
 
-        print(f"scope: {scope}")
-
         path = scope["path"]
 
         if any(path.startswith(p) for p in self.exclude_paths):
@@ -59,7 +57,7 @@ class DockThorFastAPIMiddleware:
                 op = "http.server",
                 data = {
                     "duration_ms": duration_ms,
-                    "path": path,
+                    "path": f"{path}?{query_string}" if query_string else path,
                     "method": method,
                     "query": query_string,
                 },

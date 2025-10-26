@@ -16,7 +16,7 @@ class PayloadSerializer:
             "timestamp": event.timestamp,
             "sdk": {
                 "name": "dock-thor-client",
-                "version": "1.0.4"
+                "version": "1.0.5"
             },
             "environment": event.environment,
             "platform": event.platform,
@@ -84,6 +84,7 @@ class PayloadSerializer:
                         payload["contexts"]["trace"]["data"]["method"] = span.data.get("method", "")
                     if span.tags:
                         span_dict["tags"] = span.tags
+                        payload["user"]["ip_address"] = span.tags.get("client_host", "")
                     payload["spans"].append(span_dict)
 
         return json.dumps(payload, ensure_ascii=False)
