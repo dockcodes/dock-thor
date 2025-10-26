@@ -15,7 +15,7 @@ class PayloadSerializer:
             "timestamp": event.timestamp,
             "sdk": {
                 "name": "dock-thor-client",
-                "version": "0.9.6"
+                "version": "0.9.7"
             },
             "environment": event.environment,
             "platform": event.platform,
@@ -24,7 +24,7 @@ class PayloadSerializer:
             "extra": event.extra,
             "tags": event.tags,
             "user": user or {},
-            "last_issued_at": now_iso,
+            "last_issued_at": str(now_iso),
             "status": "Pending",
             "contexts": {
                 "os": {

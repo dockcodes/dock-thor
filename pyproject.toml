@@ -1,6 +1,6 @@
 [project]
 name = "dock-thor-client"
-version = "0.9.6"
+version = "0.9.7"
 description = "Python client for Dock THOR error reporting"
 authors = [{ name = "Jacek Labudda" }]
 readme = "README.md"
