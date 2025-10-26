@@ -3,6 +3,7 @@ from .transport import HttpTransport
 
 class DockThorClient:
     def __init__(self, token: str, private_key: str, environment: str = "production"):
+        print(f"Initializing DockThorClient, token={token}, environment={environment}")
         if token and private_key:
             self.auth = AuthData(token=token, private_key=private_key)
             self.transport = HttpTransport(self.auth)
@@ -12,6 +13,7 @@ class DockThorClient:
         self.environment = environment
 
     async def capture_event(self, event: Event):
+        print(f"transport: {self.transport}")
         if self.transport:
             await self.transport.send(event)
 
