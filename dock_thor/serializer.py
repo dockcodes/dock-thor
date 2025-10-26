@@ -5,7 +5,8 @@ from .models import Event
 
 class PayloadSerializer:
 
-    def serialize(event: Event, transaction: str | None = None, request: dict | None = None, user: dict | None = None,
+    @staticmethod
+    def serialize(self, event: Event, transaction: str | None = None, request: dict | None = None, user: dict | None = None,
                   http_status_code: int | None = None) -> str:
         now_iso = datetime.now(timezone.utc)
 

@@ -9,13 +9,13 @@ class HttpTransport:
 
     async def send(self, event, transaction=False):
         serializer = PayloadSerializer()
-        content = serializer.serialize(event)
+        content = serializer.serialize(event=event)
         url = self.auth.transaction_url() if transaction else self.auth.project_url()
         headers = {
             "Content-Type": "application/json",
             "Authorization": f"Bearer {self.auth.private_key}",
         }
-
+        print(f"Send: {content}")
         response = await self.client.post(url, headers=headers, content=content)
         response.raise_for_status()
         print(f"Response: {response.content}")

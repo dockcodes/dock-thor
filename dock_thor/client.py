@@ -22,7 +22,6 @@ class DockThorClient:
     async def close(self):
         await self.transport.close()
 
-# Sync helper
 def capture_message(token: str, private_key: str, message: str, level="info"):
     client = DockThorClient(token, private_key)
     asyncio.run(client.capture_message(message, level))
