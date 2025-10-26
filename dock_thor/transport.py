@@ -15,10 +15,8 @@ class HttpTransport:
             "Content-Type": "application/json",
             "Authorization": f"Bearer {self.auth.private_key}",
         }
-        print(f"Send: {content}")
         response = await self.client.post(url, headers=headers, content=content)
         response.raise_for_status()
-        print(f"Response: {response.content}")
         return response
 
     async def close(self):

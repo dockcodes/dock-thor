@@ -1,10 +1,15 @@
 [project]
 name = "dock-thor-client"
-version = "0.9.12"
+version = "1.0.0"
 description = "Python client for DockTHOR error reporting"
 authors = [{ name = "Jacek Labudda" }]
 readme = "README.md"
+license = "MIT"
 requires-python = ">=3.9"
+keywords = ["error reporting", "monitoring", "async", "fastapi", "logging"]
+homepage = "https://dock.codes"
+repository = "https://github.com/dockcodes/dock-thor"
+documentation = "https://github.com/dockcodes/dock-thor#readme"
 dependencies = ["httpx>=0.27.0"]
 
 [build-system]

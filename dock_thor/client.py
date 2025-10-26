@@ -1,15 +1,19 @@
-import asyncio
 from .models import AuthData, Event, Span
 from .transport import HttpTransport
 
 class DockThorClient:
     def __init__(self, token: str, private_key: str, environment: str = "production"):
-        self.auth = AuthData(token=token, private_key=private_key)
-        self.transport = HttpTransport(self.auth)
+        if token and private_key:
+            self.auth = AuthData(token=token, private_key=private_key)
+            self.transport = HttpTransport(self.auth)
+        else:
+            self.auth = None
+            self.transport = None
         self.environment = environment
 
     async def capture_event(self, event: Event):
-        await self.transport.send(event)
+        if self.transport:
+            await self.transport.send(event)
 
     async def capture_exception(self, exc: Exception):
         event = Event.from_exception(exc, environment=self.environment)
@@ -21,11 +25,9 @@ class DockThorClient:
 
     async def capture_transaction(self, name: str, spans: list[Span]):
         event = Event.from_transaction(name=name, spans=spans, environment=self.environment)
-        await self.transport.send(event, True)
+        if self.transport:
+            await self.transport.send(event, True)
 
     async def close(self):
-        await self.transport.close()
-
-def capture_message(token: str, private_key: str, message: str, level="info"):
-    client = DockThorClient(token, private_key)
-    asyncio.run(client.capture_message(message, level))
+        if self.transport:
+            await self.transport.close()
