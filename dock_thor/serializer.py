@@ -16,7 +16,7 @@ class PayloadSerializer:
             "timestamp": event.timestamp,
             "sdk": {
                 "name": "dock-thor-client",
-                "version": "0.9.11"
+                "version": "0.9.12"
             },
             "environment": event.environment,
             "platform": event.platform,
