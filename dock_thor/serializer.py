@@ -16,7 +16,7 @@ class PayloadSerializer:
             "timestamp": event.timestamp,
             "sdk": {
                 "name": "dock-thor-client",
-                "version": "0.9.9"
+                "version": "0.9.10"
             },
             "environment": event.environment,
             "platform": event.platform,
@@ -54,17 +54,36 @@ class PayloadSerializer:
                 "headers": request.get("headers", {})
             }
 
-        if event.spans:
-            payload["transaction"] = event.message
-            payload["spans"] = [PayloadSerializer._serialize_span(span) for span in event.spans]
-            payload["sent_at"] = now_iso
+        if event.transaction:
+            payload["transaction"] = event.transaction
+            payload.setdefault("contexts", {}).setdefault("trace", {})["data"] = {}
 
-        if request:
-            payload["request"] = {
-                "url": request.get("url", ""),
-                "method": request.get("method", ""),
-                "headers": request.get("headers", {})
-            }
+            if event.spans:
+                payload["spans"] = []
+                for span in event.spans:
+                    span_dict = {
+                        "span_id": span.span_id,
+                        "trace_id": span.trace_id,
+                        "start_timestamp": span.start_timestamp,
+                    }
+                    if span.parent_span_id:
+                        span_dict["parent_span_id"] = span.parent_span_id
+                    if span.end_timestamp:
+                        span_dict["timestamp"] = span.end_timestamp
+                    if span.status:
+                        span_dict["status"] = span.status
+                        payload["tags"]["http.status_code"] = span.status
+                    if span.description:
+                        span_dict["description"] = span.description
+                    if span.op:
+                        span_dict["op"] = span.op
+                    if span.data:
+                        span_dict["data"] = span.data
+                        payload["contexts"]["trace"]["data"]["url"] = span.data.get("path", "")
+                        payload["contexts"]["trace"]["data"]["method"] = span.data.get("method", "")
+                    if span.tags:
+                        span_dict["tags"] = span.tags
+                    payload["spans"].append(span_dict)
 
         return json.dumps(payload, ensure_ascii=False)
 
