@@ -15,7 +15,7 @@ class PayloadSerializer:
             "timestamp": event.timestamp,
             "sdk": {
                 "name": "pab-client",
-                "version": "0.9.4"
+                "version": "0.9.5"
             },
             "environment": event.environment,
             "platform": event.platform,
