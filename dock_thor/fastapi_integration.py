@@ -2,7 +2,6 @@ import asyncio
 import time
 import uuid
 from typing import List
-import re
 from .models import Span
 
 class DockThorFastAPIMiddleware:
@@ -16,6 +15,8 @@ class DockThorFastAPIMiddleware:
             await self.app(scope, receive, send)
             return
 
+        print(f"scope: {scope}")
+
         path = scope["path"]
 
         if any(path.startswith(p) for p in self.exclude_paths):
@@ -27,6 +28,8 @@ class DockThorFastAPIMiddleware:
         trace_id = uuid.uuid4().hex
         span_id = uuid.uuid4().hex
         start_time = time.time()
+
+        query_string = scope.get("query_string", b"").decode("utf-8")
 
         response_status = {"code": 200}
 
@@ -50,7 +53,7 @@ class DockThorFastAPIMiddleware:
                 span_id = span_id,
                 trace_id = trace_id,
                 start_timestamp = start_time,
-                end_timestamp=end_time,
+                end_timestamp = end_time,
                 status = str(status_code),
                 description = f"{method} {path}",
                 op = "http.server",
@@ -58,7 +61,7 @@ class DockThorFastAPIMiddleware:
                     "duration_ms": duration_ms,
                     "path": path,
                     "method": method,
-                    "query": "",
+                    "query": query_string,
                 },
                 tags = {
                     "http.status_code": status_code,
