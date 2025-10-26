@@ -16,7 +16,7 @@ class PayloadSerializer:
             "timestamp": event.timestamp,
             "sdk": {
                 "name": "dock-thor-client",
-                "version": "0.9.8"
+                "version": "0.9.9"
             },
             "environment": event.environment,
             "platform": event.platform,
@@ -54,13 +54,54 @@ class PayloadSerializer:
                 "headers": request.get("headers", {})
             }
 
-        if transaction:
-            payload["transaction"] = transaction
-            payload["tags"]["http.status_code"] = http_status_code
+        if event.spans:
+            payload["transaction"] = event.message
+            payload["spans"] = [PayloadSerializer._serialize_span(span) for span in event.spans]
             payload["sent_at"] = now_iso
-            payload.setdefault("contexts", {}).setdefault("trace", {})["data"] = {
-                "url": request.get("url") if request else "",
-                "method": request.get("method") if request else ""
+
+        if request:
+            payload["request"] = {
+                "url": request.get("url", ""),
+                "method": request.get("method", ""),
+                "headers": request.get("headers", {})
             }
 
         return json.dumps(payload, ensure_ascii=False)
+
+    @staticmethod
+    def _serialize_stacktrace(trace_str: str):
+        if not trace_str:
+            return []
+        lines = trace_str.strip().splitlines()
+        frames = []
+        for line in lines:
+            frames.append({
+                "filename": line.strip(),
+                "in_app": True,
+            })
+        return frames
+
+    @staticmethod
+    def _serialize_span(span):
+        result = {
+            "span_id": span.span_id,
+            "trace_id": span.trace_id,
+            "start_timestamp": span.start_timestamp,
+        }
+
+        if span.parent_span_id:
+            result["parent_span_id"] = span.parent_span_id
+        if span.end_timestamp:
+            result["timestamp"] = span.end_timestamp
+        if span.status:
+            result["status"] = span.status
+        if span.description:
+            result["description"] = span.description
+        if span.op:
+            result["op"] = span.op
+        if span.data:
+            result["data"] = span.data
+        if span.tags:
+            result["tags"] = span.tags
+
+        return result
