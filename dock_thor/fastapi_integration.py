@@ -2,6 +2,7 @@ import asyncio
 import time
 import uuid
 from typing import List
+from fastapi import HTTPException
 from .models import Span
 
 class DockThorFastAPIMiddleware:
@@ -18,7 +19,13 @@ class DockThorFastAPIMiddleware:
         path = scope["path"]
 
         if any(path.startswith(p) for p in self.exclude_paths):
-            await self.app(scope, receive, send)
+            try:
+                await self.app(scope, receive, send)
+            except HTTPException:
+                raise
+            except Exception as e:
+                asyncio.create_task(self.client.capture_exception(exc=e))
+                raise
             return
 
         method = scope["method"]
@@ -46,9 +53,11 @@ class DockThorFastAPIMiddleware:
 
         try:
             await self.app(scope, receive, send_wrapper)
-        except Exception as exc:
+        except HTTPException:
+            raise
+        except Exception as e:
             response_status["code"] = 500
-            asyncio.create_task(self.client.capture_exception(exc))
+            asyncio.create_task(self.client.capture_exception(exc=e))
             raise
         finally:
             end_time = time.time()
